@@ -32,6 +32,83 @@
 </head>
 
 <body>
+
+    <!-- Vindya Chat Widget Start -->
+    <div id="dishank-chat-widget" style="position: fixed; bottom: 24px; right: 24px; z-index: 9999;">
+        <div id="dishank-chat-header" style="background: #06bbcc; color: #fff; padding: 10px 16px; border-radius: 12px 12px 0 0; cursor: pointer; display: flex; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+            <img src="https://cdn-icons-png.flaticon.com/512/9815/9815893.png" alt="Dishank" style="width: 32px; height: 32px; margin-right: 10px;">
+            <span style="font-weight: 600; font-size: 16px;">Vindya</span>
+        </div>
+        <div id="dishank-chat-body" style="display: none; width: 320px; height: 400px; background: #fff; border-radius: 0 0 12px 12px; box-shadow: 0 2px 16px rgba(0,0,0,0.18); overflow: hidden; display: flex; flex-direction: column;">
+            <div id="dishank-chat-messages" style="flex: 1; padding: 12px; overflow-y: auto; font-size: 14px;"></div>
+            <form id="dishank-chat-form" style="display: flex; border-top: 1px solid #eee;">
+                <input id="dishank-chat-input" type="text" placeholder="Type your message..." autocomplete="off" style="flex: 1; border: none; padding: 10px; font-size: 14px; outline: none;">
+                <button type="submit" style="background: #06bbcc; color: #fff; border: none; padding: 0 16px; font-size: 16px; cursor: pointer;">Send</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        const chatHeader = document.getElementById('dishank-chat-header');
+        const chatBody = document.getElementById('dishank-chat-body');
+        const chatMessages = document.getElementById('dishank-chat-messages');
+        const chatForm = document.getElementById('dishank-chat-form');
+        const chatInput = document.getElementById('dishank-chat-input');
+
+        chatHeader.addEventListener('click', function() {
+            if (chatBody.style.display === 'none') {
+                chatBody.style.display = 'flex';
+            } else {
+                chatBody.style.display = 'none';
+            }
+        });
+
+        function appendMessage(sender, text) {
+            const msgDiv = document.createElement('div');
+            msgDiv.style.marginBottom = '8px';
+            msgDiv.innerHTML = `<strong style="color: ${sender === 'Dishank' ? '#0078d7' : '#222'};">${sender}:</strong> <span>${text}</span>`;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        chatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const userMsg = chatInput.value.trim();
+            if (!userMsg) return;
+            appendMessage('You', userMsg);
+            chatInput.value = '';
+            // Show typing indicator
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'dishank-typing';
+            typingDiv.innerHTML = '<em style="color:#888">Dishank is typing...</em>';
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            fetch('https://n8n.srv1212314.hstgr.cloud/webhook/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: userMsg })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('dishank-typing')?.remove();
+                let reply = '';
+                if (Array.isArray(data) && data.length && data[0].output) {
+                    reply = data[0].output;
+                } else if (typeof data === 'object' && (data.reply || data.message)) {
+                    reply = data.reply || data.message;
+                } else {
+                    reply = JSON.stringify(data);
+                }
+                appendMessage('Dishank', reply);
+            })
+            .catch(error => {
+                document.getElementById('dishank-typing')?.remove();
+                appendMessage('Dishank', 'Sorry, there was an error connecting to the chat service.');
+            });
+        });
+    </script>
+    <!-- Vindya Chat Widget End -->
     <!-- Spinner Start -->
     <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
         <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
@@ -44,7 +121,7 @@
     <!-- Navbar Start -->
     <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
         <a href="index.html" class="navbar-brand d-flex align-items-center px-4 px-lg-5">
-            <h2 class="m-0 text-primary"><i class="fa fa-book me-3"></i>eLEARNING</h2>
+            <h2 class="m-0 text-primary"><i class="fa fa-book me-3"></i>Gnanajyothi Rashtriya Vidyalaya</h2>
         </a>
         <button type="button" class="navbar-toggler me-4" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>
@@ -79,9 +156,9 @@
                     <div class="container">
                         <div class="row justify-content-start">
                             <div class="col-sm-10 col-lg-8">
-                                <h5 class="text-primary text-uppercase mb-3 animated slideInDown">Best Online Courses</h5>
-                                <h1 class="display-3 text-white animated slideInDown">The Best Online Learning Platform</h1>
-                                <p class="fs-5 text-white mb-4 pb-2">Vero elitr justo clita lorem. Ipsum dolor at sed stet sit diam no. Kasd rebum ipsum et diam justo clita et kasd rebum sea sanctus eirmod elitr.</p>
+                                <h5 class="text-primary text-uppercase mb-3 animated slideInDown">Welcome to Gnanajyothi Rashtriya Vidyalaya</h5>
+                                <h1 class="display-3 text-white animated slideInDown">Excellence in Education for All</h1>
+                                <p class="fs-5 text-white mb-4 pb-2">Empowering students through quality education, dedicated teachers, and modern learning resources. Join us to build a brighter future for your child.</p>
                                 <a href="" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Read More</a>
                                 <a href="" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Join Now</a>
                             </div>
@@ -95,9 +172,9 @@
                     <div class="container">
                         <div class="row justify-content-start">
                             <div class="col-sm-10 col-lg-8">
-                                <h5 class="text-primary text-uppercase mb-3 animated slideInDown">Best Online Courses</h5>
-                                <h1 class="display-3 text-white animated slideInDown">Get Educated Online From Your Home</h1>
-                                <p class="fs-5 text-white mb-4 pb-2">Vero elitr justo clita lorem. Ipsum dolor at sed stet sit diam no. Kasd rebum ipsum et diam justo clita et kasd rebum sea sanctus eirmod elitr.</p>
+                                <h5 class="text-primary text-uppercase mb-3 animated slideInDown">Quality Education</h5>
+                                <h1 class="display-3 text-white animated slideInDown">Comprehensive Learning Programs</h1>
+                                <p class="fs-5 text-white mb-4 pb-2">Experience exceptional education with our comprehensive curriculum, experienced educators, and state-of-the-art facilities. We focus on developing critical thinking, creativity, and leadership skills in every student.</p>
                                 <a href="" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Read More</a>
                                 <a href="" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Join Now</a>
                             </div>
@@ -119,8 +196,7 @@
                         <div class="p-4">
                             <i class="fa fa-3x fa-graduation-cap text-primary mb-4"></i>
                             <h5 class="mb-3">Skilled Instructors</h5>
-                            <p>Diam elitr kasd sed at elitr sed ipsum justo dolor sed clita amet diam</p>
-                        </div>
+                            <p>Highly qualified instructors dedicated to exceptional education and personalized guidance.</p></div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
@@ -128,8 +204,7 @@
                         <div class="p-4">
                             <i class="fa fa-3x fa-globe text-primary mb-4"></i>
                             <h5 class="mb-3">Online Classes</h5>
-                            <p>Diam elitr kasd sed at elitr sed ipsum justo dolor sed clita amet diam</p>
-                        </div>
+                            <p>Access comprehensive online learning with live classes, recorded lectures, and interactive sessions available 24/7.</p></div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-delay="0.5s">
@@ -137,7 +212,7 @@
                         <div class="p-4">
                             <i class="fa fa-3x fa-home text-primary mb-4"></i>
                             <h5 class="mb-3">Home Projects</h5>
-                            <p>Diam elitr kasd sed at elitr sed ipsum justo dolor sed clita amet diam</p>
+                            <p>Build practical skills through real-world projects and hands-on assignments from home.</p>
                         </div>
                     </div>
                 </div>
@@ -146,7 +221,7 @@
                         <div class="p-4">
                             <i class="fa fa-3x fa-book-open text-primary mb-4"></i>
                             <h5 class="mb-3">Book Library</h5>
-                            <p>Diam elitr kasd sed at elitr sed ipsum justo dolor sed clita amet diam</p>
+                            <p>Access our extensive digital library with thousands of educational resources and reference materials.</p>
                         </div>
                     </div>
                 </div>
@@ -167,18 +242,12 @@
                 </div>
                 <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.3s">
                     <h6 class="section-title bg-white text-start text-primary pe-3">About Us</h6>
-                    <h1 class="mb-4">Welcome to eLEARNING</h1>
-                    <p class="mb-4">Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit. Aliqu diam amet diam et eos. Clita erat ipsum et lorem et sit.</p>
-                    <p class="mb-4">Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit. Aliqu diam amet diam et eos. Clita erat ipsum et lorem et sit, sed stet lorem sit clita duo justo magna dolore erat amet</p>
+                    <h1 class="mb-4">About Gnanajyothi Rashtriya Vidyalaya</h1>
+                    <p class="mb-4">Gnanajyothi Rashtriya Vidyalaya is dedicated to providing quality education and developing well-rounded individuals. Our institution focuses on academic excellence, character building, and holistic development of students.</p>
+                    <p class="mb-4">With experienced faculty, modern infrastructure, and a comprehensive curriculum, we strive to empower students with knowledge and skills needed for success in their future endeavors.</p>
                     <div class="row gy-2 gx-4 mb-4">
                         <div class="col-sm-6">
-                            <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Skilled Instructors</p>
-                        </div>
-                        <div class="col-sm-6">
-                            <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Online Classes</p>
-                        </div>
-                        <div class="col-sm-6">
-                            <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>International Certificate</p>
+                            <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Reputed School</p>
                         </div>
                         <div class="col-sm-6">
                             <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Skilled Instructors</p>
@@ -187,7 +256,22 @@
                             <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Online Classes</p>
                         </div>
                         <div class="col-sm-6">
-                            <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>International Certificate</p>
+                            <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Established Institution</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Qualified Faculty</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Interactive Learning</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Recognized Programs</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Modern Facilities</p>
+                        </div>
+                        <div class="col-sm-6">
+                            <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Student Success</p>
                         </div>
                     </div>
                     <a class="btn btn-primary py-3 px-5 mt-2" href="">Read More</a>
@@ -202,27 +286,27 @@
     <div class="container-xxl py-5 category">
         <div class="container">
             <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-                <h6 class="section-title bg-white text-center text-primary px-3">Categories</h6>
-                <h1 class="mb-5">Courses Categories</h1>
+                <h6 class="section-title bg-white text-center text-primary px-3">Our Campus</h6>
+                <h1 class="mb-5">World Class Amenities</h1>
             </div>
             <div class="row g-3">
                 <div class="col-lg-7 col-md-6">
                     <div class="row g-3">
                         <div class="col-lg-12 col-md-12 wow zoomIn" data-wow-delay="0.1s">
                             <a class="position-relative d-block overflow-hidden" href="">
-                                <img class="img-fluid" src="img/cat-1.jpg" alt="">
+                                <img class="img-fluid" src="img/cat-2.jpg" alt="">
                                 <div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin: 1px;">
-                                    <h5 class="m-0">Web Design</h5>
-                                    <small class="text-primary">49 Courses</small>
+                                    <h5 class="m-0">Annual Day Celebration</h5>
+                                    <small class="text-primary">Photos</small>
                                 </div>
                             </a>
                         </div>
                         <div class="col-lg-6 col-md-12 wow zoomIn" data-wow-delay="0.3s">
                             <a class="position-relative d-block overflow-hidden" href="">
-                                <img class="img-fluid" src="img/cat-2.jpg" alt="">
+                                <img class="img-fluid" src="img/cat-1.jpg" alt="">
                                 <div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin: 1px;">
-                                    <h5 class="m-0">Graphic Design</h5>
-                                    <small class="text-primary">49 Courses</small>
+                                    <h5 class="m-0">Sports</h5>
+                                    <small class="text-primary">Photos</small>
                                 </div>
                             </a>
                         </div>
@@ -230,8 +314,8 @@
                             <a class="position-relative d-block overflow-hidden" href="">
                                 <img class="img-fluid" src="img/cat-3.jpg" alt="">
                                 <div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin: 1px;">
-                                    <h5 class="m-0">Video Editing</h5>
-                                    <small class="text-primary">49 Courses</small>
+                                    <h5 class="m-0">Laboratory</h5>
+                                    <small class="text-primary">Photos</small>
                                 </div>
                             </a>
                         </div>
@@ -241,8 +325,8 @@
                     <a class="position-relative d-block h-100 overflow-hidden" href="">
                         <img class="img-fluid position-absolute w-100 h-100" src="img/cat-4.jpg" alt="" style="object-fit: cover;">
                         <div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin:  1px;">
-                            <h5 class="m-0">Online Marketing</h5>
-                            <small class="text-primary">49 Courses</small>
+                            <h5 class="m-0">Cultural Activities</h5>
+                            <small class="text-primary">Photos</small>
                         </div>
                     </a>
                 </div>
@@ -256,8 +340,8 @@
     <div class="container-xxl py-5">
         <div class="container">
             <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-                <h6 class="section-title bg-white text-center text-primary px-3">Courses</h6>
-                <h1 class="mb-5">Popular Courses</h1>
+                <h6 class="section-title bg-white text-center text-primary px-3">About Us</h6>
+                <h1 class="mb-5">Why Choose US</h1>
             </div>
             <div class="row g-4 justify-content-center">
                 <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
@@ -265,12 +349,11 @@
                         <div class="position-relative overflow-hidden">
                             <img class="img-fluid" src="img/course-1.jpg" alt="">
                             <div class="w-100 d-flex justify-content-center position-absolute bottom-0 start-0 mb-4">
-                                <a href="#" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end" style="border-radius: 30px 0 0 30px;">Read More</a>
-                                <a href="#" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Join Now</a>
+                                <a href="#" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end" style="border-radius: 30px 30px 30px 30px;">Read More</a>
                             </div>
                         </div>
                         <div class="text-center p-4 pb-0">
-                            <h3 class="mb-0">$149.00</h3>
+                            <h3 class="mb-0">Safety</h3>
                             <div class="mb-3">
                                 <small class="fa fa-star text-primary"></small>
                                 <small class="fa fa-star text-primary"></small>
@@ -279,13 +362,36 @@
                                 <small class="fa fa-star text-primary"></small>
                                 <small>(123)</small>
                             </div>
-                            <h5 class="mb-4">Web Design & Development Course for Beginners</h5>
+                            <h5 class="mb-4">Our campus provides one of the best safety for our children.</h5>
                         </div>
-                        <div class="d-flex border-top">
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
+                    <div class="course-item bg-light">
+                        <div class="position-relative overflow-hidden">
+                            <img class="img-fluid" src="img/course-3.jpg" alt="">
+                            <div class="w-100 d-flex justify-content-center position-absolute bottom-0 start-0 mb-4">
+                                <a href="#" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end" style="border-radius: 30px 30px 30px 30px;">Read More</a>
+                            </div>
+                        </div>
+                        <div class="text-center p-4 pb-0">
+                            <h3 class="mb-0">Classroom</h3>
+                            <div class="mb-3">
+                                <small class="fa fa-star text-primary"></small>
+                                <small class="fa fa-star text-primary"></small>
+                                <small class="fa fa-star text-primary"></small>
+                                <small class="fa fa-star text-primary"></small>
+                                <small class="fa fa-star text-primary"></small>
+                                <small>(123)</small>
+                            </div>
+                            <h5 class="mb-4">Our Classroom facility provides good environment for the students</h5>
+                        </div>
+                        <!-- <div class="d-flex border-top">
                             <small class="flex-fill text-center border-end py-2"><i class="fa fa-user-tie text-primary me-2"></i>John Doe</small>
                             <small class="flex-fill text-center border-end py-2"><i class="fa fa-clock text-primary me-2"></i>1.49 Hrs</small>
                             <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30 Students</small>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
@@ -293,12 +399,11 @@
                         <div class="position-relative overflow-hidden">
                             <img class="img-fluid" src="img/course-2.jpg" alt="">
                             <div class="w-100 d-flex justify-content-center position-absolute bottom-0 start-0 mb-4">
-                                <a href="#" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end" style="border-radius: 30px 0 0 30px;">Read More</a>
-                                <a href="#" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Join Now</a>
+                                <a href="#" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end" style="border-radius: 30px 30px 30px 30px;">Read More</a>
                             </div>
                         </div>
                         <div class="text-center p-4 pb-0">
-                            <h3 class="mb-0">$149.00</h3>
+                            <h3 class="mb-0">CCTV Camera</h3>
                             <div class="mb-3">
                                 <small class="fa fa-star text-primary"></small>
                                 <small class="fa fa-star text-primary"></small>
@@ -307,41 +412,13 @@
                                 <small class="fa fa-star text-primary"></small>
                                 <small>(123)</small>
                             </div>
-                            <h5 class="mb-4">Web Design & Development Course for Beginners</h5>
+                            <h5 class="mb-4">Our campus provides one of the best safety for our children.</h5>
                         </div>
-                        <div class="d-flex border-top">
+                        <!-- <div class="d-flex border-top">
                             <small class="flex-fill text-center border-end py-2"><i class="fa fa-user-tie text-primary me-2"></i>John Doe</small>
                             <small class="flex-fill text-center border-end py-2"><i class="fa fa-clock text-primary me-2"></i>1.49 Hrs</small>
                             <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30 Students</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
-                    <div class="course-item bg-light">
-                        <div class="position-relative overflow-hidden">
-                            <img class="img-fluid" src="img/course-3.jpg" alt="">
-                            <div class="w-100 d-flex justify-content-center position-absolute bottom-0 start-0 mb-4">
-                                <a href="#" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end" style="border-radius: 30px 0 0 30px;">Read More</a>
-                                <a href="#" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Join Now</a>
-                            </div>
-                        </div>
-                        <div class="text-center p-4 pb-0">
-                            <h3 class="mb-0">$149.00</h3>
-                            <div class="mb-3">
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small class="fa fa-star text-primary"></small>
-                                <small>(123)</small>
-                            </div>
-                            <h5 class="mb-4">Web Design & Development Course for Beginners</h5>
-                        </div>
-                        <div class="d-flex border-top">
-                            <small class="flex-fill text-center border-end py-2"><i class="fa fa-user-tie text-primary me-2"></i>John Doe</small>
-                            <small class="flex-fill text-center border-end py-2"><i class="fa fa-clock text-primary me-2"></i>1.49 Hrs</small>
-                            <small class="flex-fill text-center py-2"><i class="fa fa-user text-primary me-2"></i>30 Students</small>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -363,16 +440,17 @@
                         <div class="overflow-hidden">
                             <img class="img-fluid" src="img/team-1.jpg" alt="">
                         </div>
-                        <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
+                        <!-- <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
                             <div class="bg-light d-flex justify-content-center pt-2 px-1">
                                 <a class="btn btn-sm-square btn-primary mx-1" href=""><i class="fab fa-facebook-f"></i></a>
                                 <a class="btn btn-sm-square btn-primary mx-1" href=""><i class="fab fa-twitter"></i></a>
                                 <a class="btn btn-sm-square btn-primary mx-1" href=""><i class="fab fa-instagram"></i></a>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="text-center p-4">
                             <h5 class="mb-0">Instructor Name</h5>
-                            <small>Designation</small>
+                            <small>Designation</small><br>
+                            <small>Qualification</small>
                         </div>
                     </div>
                 </div>
@@ -381,16 +459,17 @@
                         <div class="overflow-hidden">
                             <img class="img-fluid" src="img/team-2.jpg" alt="">
                         </div>
-                        <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
+                        <!-- <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
                             <div class="bg-light d-flex justify-content-center pt-2 px-1">
                                 <a class="btn btn-sm-square btn-primary mx-1" href=""><i class="fab fa-facebook-f"></i></a>
                                 <a class="btn btn-sm-square btn-primary mx-1" href=""><i class="fab fa-twitter"></i></a>
                                 <a class="btn btn-sm-square btn-primary mx-1" href=""><i class="fab fa-instagram"></i></a>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="text-center p-4">
                             <h5 class="mb-0">Instructor Name</h5>
-                            <small>Designation</small>
+                            <small>Designation</small><br>
+                            <small>Qualification</small>
                         </div>
                     </div>
                 </div>
@@ -399,16 +478,17 @@
                         <div class="overflow-hidden">
                             <img class="img-fluid" src="img/team-3.jpg" alt="">
                         </div>
-                        <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
+                        <!-- <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
                             <div class="bg-light d-flex justify-content-center pt-2 px-1">
                                 <a class="btn btn-sm-square btn-primary mx-1" href=""><i class="fab fa-facebook-f"></i></a>
                                 <a class="btn btn-sm-square btn-primary mx-1" href=""><i class="fab fa-twitter"></i></a>
                                 <a class="btn btn-sm-square btn-primary mx-1" href=""><i class="fab fa-instagram"></i></a>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="text-center p-4">
                             <h5 class="mb-0">Instructor Name</h5>
-                            <small>Designation</small>
+                            <small>Designation</small><br>
+                            <small>Qualification</small>
                         </div>
                     </div>
                 </div>
@@ -417,16 +497,17 @@
                         <div class="overflow-hidden">
                             <img class="img-fluid" src="img/team-4.jpg" alt="">
                         </div>
-                        <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
+                        <!-- <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
                             <div class="bg-light d-flex justify-content-center pt-2 px-1">
                                 <a class="btn btn-sm-square btn-primary mx-1" href=""><i class="fab fa-facebook-f"></i></a>
                                 <a class="btn btn-sm-square btn-primary mx-1" href=""><i class="fab fa-twitter"></i></a>
                                 <a class="btn btn-sm-square btn-primary mx-1" href=""><i class="fab fa-instagram"></i></a>
                             </div>
-                        </div>
+                        </div> -->
                         <div class="text-center p-4">
                             <h5 class="mb-0">Instructor Name</h5>
-                            <small>Designation</small>
+                            <small>Designation</small><br>
+                            <small>Qualification</small>
                         </div>
                     </div>
                 </div>
@@ -446,34 +527,34 @@
             <div class="owl-carousel testimonial-carousel position-relative">
                 <div class="testimonial-item text-center">
                     <img class="border rounded-circle p-2 mx-auto mb-3" src="img/testimonial-1.jpg" style="width: 80px; height: 80px;">
-                    <h5 class="mb-0">Client Name</h5>
-                    <p>Profession</p>
+                    <h5 class="mb-0">Student Name</h5>
+                    <p>Class</p>
                     <div class="testimonial-text bg-light text-center p-4">
-                    <p class="mb-0">Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit diam amet diam et eos. Clita erat ipsum et lorem et sit.</p>
+                    <p class="mb-0">Excellent education and supportive environment. The teachers are dedicated and the facilities are outstanding. I highly recommend this school to all parents.</p>
                     </div>
                 </div>
                 <div class="testimonial-item text-center">
                     <img class="border rounded-circle p-2 mx-auto mb-3" src="img/testimonial-2.jpg" style="width: 80px; height: 80px;">
-                    <h5 class="mb-0">Client Name</h5>
-                    <p>Profession</p>
+                    <h5 class="mb-0">Student Name</h5>
+                    <p>Class</p>
                     <div class="testimonial-text bg-light text-center p-4">
-                    <p class="mb-0">Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit diam amet diam et eos. Clita erat ipsum et lorem et sit.</p>
+                    <p class="mb-0">Great teachers who truly care about student progress. The curriculum is well-structured and the learning environment is very conducive.</p>
                     </div>
                 </div>
                 <div class="testimonial-item text-center">
                     <img class="border rounded-circle p-2 mx-auto mb-3" src="img/testimonial-3.jpg" style="width: 80px; height: 80px;">
-                    <h5 class="mb-0">Client Name</h5>
-                    <p>Profession</p>
+                    <h5 class="mb-0">Student Name</h5>
+                    <p>Class</p>
                     <div class="testimonial-text bg-light text-center p-4">
-                    <p class="mb-0">Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit diam amet diam et eos. Clita erat ipsum et lorem et sit.</p>
+                    <p class="mb-0">Outstanding infrastructure and experienced faculty. My grades have improved significantly since joining this school. Highly appreciated!</p>
                     </div>
                 </div>
                 <div class="testimonial-item text-center">
                     <img class="border rounded-circle p-2 mx-auto mb-3" src="img/testimonial-4.jpg" style="width: 80px; height: 80px;">
-                    <h5 class="mb-0">Client Name</h5>
-                    <p>Profession</p>
+                    <h5 class="mb-0">Student Name</h5>
+                    <p>Class</p>
                     <div class="testimonial-text bg-light text-center p-4">
-                    <p class="mb-0">Tempor erat elitr rebum at clita. Diam dolor diam ipsum sit diam amet diam et eos. Clita erat ipsum et lorem et sit.</p>
+                    <p class="mb-0">Fantastic school with excellent facilities and supportive staff. I feel confident about my studies and future career prospects.</p>
                     </div>
                 </div>
             </div>
